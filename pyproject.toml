@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "falconlib"
+version = "0.0.3"
+authors = [
+    {name="Thomas J. Daley, Esq.", email="tjd@powerdaley.com"},
+]
+description = "Client-side library for accessing the falconapi restful service."
+readme = "README.md"
+license = {file="LICENSE"}
+requires-python = ">3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+keywords = ["falconapi", "falconlib"]
+dependencies = [
+    "requests"
+]
+[project.urls]
+"Homepage" = "https://github.com/tjdaley/falconlib"
+"Bug Tracker" = "https://github.com/tjdaley/falconlib/issues"
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "serial",
+]
