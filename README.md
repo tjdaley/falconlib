@@ -34,8 +34,8 @@ r = falconlib.last_response
 
 If an API call fails, the HTTP status code will be one of these:
 
-+----------+---------------------------------+
 | Status Code | Explanation |
+|----------|---------------------------------|
 | 401 | Invalid login credentials |
 | 404 | Object not found, e.g. Document, Tracker, etc. |
 | 409 | Conflict. Check falconlib.last_response.json() for a specific explanation |
@@ -52,10 +52,13 @@ If an API call fails, the HTTP status code will be one of these:
 *doc* (dict) - Elements of a [Document](https://api.jdbot.us/docs#model-Document)
 
 *Result*
+
 Upon successful insert:
+
     (dict) - ```{"message": "Document added", "id": "doc-1"}```
 
  or, if *last_response.status_code* > 200, an error such as:
+
     (dict) - ```{"detail": "Document already exists: doc_id"}```
 
 ```python
