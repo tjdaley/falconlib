@@ -5,14 +5,14 @@ Python client lib for accessing Falcon API
     <a href="https://github.com/tjdaley/falconlib/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/tjdaley/falconlib"></a>
     <a href="https://github.com/tjdaley/falconlib/network"><img alt="GitHub forks" src="https://img.shields.io/github/forks/tjdaley/falconlib"></a>
     <a href="https://github.com/tjdaley/falconlib/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/tjdaley/falconlib"><a>
-    <img alt="PyPI - License" src="https://img.shields.io/pypi/l/falconlib">
     <img alt="Stage: Development" src="https://img.shields.io/badge/stage-Development-orange">
+    <img alt="PyPI - License" src="https://img.shields.io/pypi/l/falconlib">
 </p>
 <p align="center">
     <a href="#purpose">Purpose</a> &bull;
     <a href="#installation">Installation</a> &bull;
     <a href="#notes">Notes</a> &bull;
-    <a href="#document_management">Document Management</a> &bull;
+    <a href="#document-management">Document Management</a> &bull;
     <a href="#author">Author</a>
 </p>
 
