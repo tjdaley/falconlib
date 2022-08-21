@@ -162,7 +162,7 @@ revised_doc['title'] = '**Updated Document'
 
 # Update the document
 r = falconlib.update_document(revised_doc)
-asset r.success == True
+assert r.success == True
 assert falconlib.last_response.status_code == 200
 ```
 
@@ -190,6 +190,22 @@ assert falconlib.last_response.status_code == 200
 
 # TRACKER MANAGEMENT
 
-## Author
+# MAINTENANCE
+
+Before posting a new version, run pytest and make sure all tests are passing.
+
+Next, make sure to bump the version in falconlib.toml
+
+Then, build a new version:
+
+```py -m build```
+
+Finally, upload the new version:
+
+```py -m twine upload dist/*```
+
+For detailed instructions, visit (https://packaging.python.org)[https://packaging.python.org/en/latest/tutorials/packaging-projects/].
+
+# Author
 
 Thomas J. Daley, J.D. is an active family law litigation attorney practicing primarily in Collin County, Texas and software developer. My family law practice is limited to divorce, child custody, child support, enforcment, and modification suits. [Web Site](https://koonsfuller.com/attorneys/tom-daley/)
