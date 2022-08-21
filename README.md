@@ -40,7 +40,6 @@ If an API call fails, the HTTP status code will be one of these:
 | 404 | Object not found, e.g. Document, Tracker, etc. |
 | 409 | Conflict. Check falconlib.last_response.json() for a specific explanation |
 | 500 | Server-side error. Sorry about that. |
-+----------+---------------------------------+
 
 # DOCUMENT MANAGEMENT
 
