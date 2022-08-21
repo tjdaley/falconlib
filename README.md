@@ -1,6 +1,11 @@
 # falconlib
 Python client lib for accessing Falcon API
 
+*Falconlib* is the preferred means of accessing my back-end services. With the proper credentials,
+you can access some of those back-end services through the *requests* pacakge, but they change
+frequently and move from endpoint to endpoint. *Falconlib* smoothes out those developmental
+undulations.
+
 # GETTING STARTED
 
 ## Installation
@@ -16,9 +21,42 @@ falconlib = FalconLib('https://your-endpoint.com')
 falconlib.authorize('my_username', 'my_password')
 ```
 
+# NOTES
+
+The *requests* package handles the HTTPS traffic between *falconlib* and the back-end services.
+Because of that, you can access the last *response* object thus:
+
+```python
+r = falconlib.last_response
+```
+
+# HTTP STATUS CODES
+
+If an API call fails, the HTTP status code will be one of these:
+
++----------+---------------------------------+
+| Status Code | Explanation |
+| 401 | Invalid login credentials |
+| 404 | Object not found, e.g. Document, Tracker, etc. |
+| 409 | Conflict. Check falconlib.last_response.json() for a specific explanation |
+| 500 | Server-side error. Sorry about that. |
++----------+---------------------------------+
+
 # DOCUMENT MANAGEMENT
 
-## add_document() - Add a document to the database
+## Add a document to the database
+*add_document(doc: dict) -> dict*
+
+*Arguments*
+
+*doc* (dict) - Elements of a [Document](https://api.jdbot.us/docs#model-Document)
+
+*Result*
+Upon successful insert:
+    (dict) - ```{"message": "Document added", "id": "doc-1"}```
+
+ or, if *last_response.status_code* > 200, an error such as:
+    (dict) - ```{"detail": "Document already exists: doc_id"}```
 
 ```python
 DOC_1 = {
