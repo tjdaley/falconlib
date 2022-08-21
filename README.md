@@ -41,26 +41,39 @@ If an API call fails, the HTTP status code will be one of these:
 | 409 | Conflict. Check falconlib.last_response.json() for a specific explanation |
 | 500 | Server-side error. Sorry about that. |
 
+# FUNCTION RETURNS
+
+All functions return a FalconStatus object having these fields:
+
+| Field | Type | Value |
+|-------|------|-------|
+| *success* | (bool)  | True if successful otherwise False |
+| *status* | (int) | HTTP status of last HTTP(s) request |
+| *message* | (str) | Message that explains the success or failure of the function call |
+| *payload* | (dict) | Contains the payload of the function call and is documented with each method below |
+
 # DOCUMENT MANAGEMENT
 
 ## Add a document to the database
-*add_document(doc: dict) -> dict*
 
-*Arguments*
+### *add_document(doc: dict) -> FalconStatus*
+
+***Arguments***
 
 *doc* (dict) - Elements of a [Document](https://api.jdbot.us/docs#model-Document)
 
-*Result*
+***Result***
 
-Upon successful insert:
+Instance of *FalconStatus*
 
-    (dict) - ```{"message": "Document added", "id": "doc-1"}```
-
- or, if *last_response.status_code* > 200, an error such as:
-
-    (dict) - ```{"detail": "Document already exists: doc_id"}```
+### Example
 
 ```python
+from falconlib import FalconlLib
+
+falconlib = FalconLib('https://your-endpoint.com')
+falconlib.authorize('my_username', 'my_password')
+
 DOC_1 = {
     "id": "doc-1",
     "path":"x:\\shared\\office\\user\\client\\discovery\\our production\\my_document.pdf",
@@ -75,39 +88,69 @@ DOC_1 = {
     "client_reference": "20202.1",
 }
 
-r = FALCONLIB.add_document(DOC_1)
-assert FALCONLIB.last_response.status_code == 201
+fstatus = falconlib.add_document(DOC_1)
+assert fstatus.success == True
+assert falconlib.last_response.status_code == 201
 ```
+## Retrieve a Document from the Database
 
-## get_document() - Retrieve a document from the database
+### *get_document(document_id: str) -> FalconStatus*
+
+***Arguments***
+
+(str): *id* of the document to be retrieved.
+
+***Result***
+
+Instance of *FalconStatus* where the *payload* field contains a
+*dict* having the elements of a [Document](https://api.jdbot.us/docs#model-Document)
+
+### Example
 
 ```python
-doc = FALCONLIB.get_document(DOC_1['id'])
-assert FALCONLIB.last_response.status_code == 200
-assert r['id'] == DOC_1['id']
-```
+from falconlib import FalconlLib
 
-## update_document() - Update a document in the database
+falconlib = FalconLib('https://your-endpoint.com')
+falconlib.authorize('my_username', 'my_password')
+
+doc = falconlib.get_document('doc-1').payload
+assert falconlib.last_response.status_code == 200
+assert doc['id'] == 'doc-1'
+```
+## Update a Document in the Database
+
+### *update_document(revised_doc: dict) -> FalconStatus*
+
+***Arguments***
+
+*revised_doc* (dict) - Elements of a [Document](https://api.jdbot.us/docs#model-Document)
+
+***Result***
+
+Instance of *FalconStatus*
+
+### Example
 
 ```python
+from falconlib import FalconlLib
+
+falconlib = FalconLib('https://your-endpoint.com')
+falconlib.authorize('my_username', 'my_password')
+
 # Retrieve document before updating to avoid version conflicts.
-upd = FALCONLIB.get_document(DOC_1['id'])
+revised_doc = falconlib.get_document(DOC_1['id']).payload
 
 # Update the field(s) you want to revise.
-upd['title'] = '**Updated Document'
+revised_doc['title'] = '**Updated Document'
 
 # Update the document
-r = FALCONLIB.update_document(upd)
-
-# Status codes:
-# 200 = Success
-# 404 = Document not found
-# 401 = Authorization error
-# 409 = Version conflict (retrieve and try again)
-assert FALCONLIB.last_response.status_code == 200
+r = falconlib.update_document(revised_doc)
+asset r.success == True
+assert falconlib.last_response.status_code == 200
 ```
 
-## delete_document() - Delete a document from the database
+## Delete a Document from the Database
+### *delete_document(document_id: str, cascade: bool = True) -> FalconStatus*
 
 ### *Arguments*
 
@@ -119,8 +162,13 @@ that reference it. If *cascade* is set to False, then the document will be delet
 it is not linked to any trackers.
 
 ```python
-FALCONLIB.delete_document(document_id=DOC_1['id'], cascade=False)
-assert FALCONLIB.last_response.status_code == 200
+from falconlib import FalconlLib
+
+falconlib = FalconLib('https://your-endpoint.com')
+r = falconlib.authorize('my_username', 'my_password')
+r = falconlib.delete_document(document_id=DOC_1['id'], cascade=False)
+assert r.success == True
+assert falconlib.last_response.status_code == 200
 ```
 
 # TRACKER MANAGEMENT

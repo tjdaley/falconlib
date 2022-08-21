@@ -1,8 +1,6 @@
 """
 tests_010_lib.py - Tests for falconlib.py
 """
-import requests
-import pytest
 import json
 import falconlib
 
@@ -52,33 +50,31 @@ DOC_2 = {
 FALCONLIB = falconlib.FalconLib(SERVER, API_VERSION)
 
 # Authenticate user
-@pytest.mark.slow
 def test_authenticate_user():
-    r = FALCONLIB.authorize(test_user['username'], test_user['password'])
-    #assert r.success == True
+    FALCONLIB.authorize(test_user['username'], test_user['password'])
     assert FALCONLIB.auth_token is not None
 
 # Document Tests
 def test_add_document_1():
     r = FALCONLIB.add_document(DOC_1)
-    assert r.success == True
-    assert r.payload['id'] == DOC_1['id']
+    assert FALCONLIB.last_response.status_code == 201
+    assert r['id'] == DOC_1['id']
     print("Add Document")
-    print(json.dumps(r.dict(), indent=4))
+    print(json.dumps(r, indent=4))
+    print("-"*80)
 
 def test_add_document_2():
     r = FALCONLIB.add_document(DOC_2)
-    assert r.success == True
-    assert r.payload['id'] == DOC_2['id']
+    assert FALCONLIB.last_response.status_code == 201
+    assert r['id'] == DOC_2['id']
 
 def test_get_document():
     r = FALCONLIB.get_document(DOC_1['id'])
-    if r.success == False:
-        print("*"*80)
-        print("Get Document")
-        print(json.dumps(r.dict(), indent=4))
+    print("*"*80)
+    print("Get Document")
+    print(json.dumps(r, indent=4))
     assert FALCONLIB.last_response.status_code == 200
-    assert r.payload['id'] == DOC_1['id']
+    assert r['id'] == DOC_1['id']
 
 def test_update_document_version_fail():
     upd = DOC_1.copy()
@@ -86,22 +82,21 @@ def test_update_document_version_fail():
     r = FALCONLIB.update_document(upd)
     print("*"*80)
     print("Update Document - Version Fail")
-    print(json.dumps(r.dict(), indent=4))
+    print(json.dumps(r, indent=4))
     assert FALCONLIB.last_response.status_code == 409
-    assert r.payload['detail'] == f"Document version conflict: {upd['id']}"
+    assert r['detail'] == f"Document version conflict: {upd['id']}"
 
 def test_update_document_version_success():
-    upd = FALCONLIB.get_document(DOC_1['id']).payload.copy()
+    upd = FALCONLIB.get_document(DOC_1['id'])
     upd['title'] = '**Updated Document'
     r = FALCONLIB.update_document(upd)
     print("*"*80)
     print("Update Document - Version Successcd ")
-    print(json.dumps(r.dict(), indent=4))
+    print(json.dumps(r, indent=4))
     assert FALCONLIB.last_response.status_code == 200
-    assert r.success == True
-    assert r.payload['id'] == DOC_1['id']
-    r = FALCONLIB.get_document(DOC_1['id'])
-    assert r.payload['title'] == '**Updated Document'
+    assert r['id'] == DOC_1['id']
+    doc = FALCONLIB.get_document(DOC_1['id'])
+    assert doc['title'] == '**Updated Document'
 
 # Tracker Tests
 def test_create_tracker_123():
@@ -115,23 +110,23 @@ def test_create_tracker_124():
 def test_get_tracker():
     r = FALCONLIB.get_tracker(TRACKER_ID_123['id'])
     assert FALCONLIB.last_response.status_code == 200
-    assert r.payload['id'] == TRACKER_ID_123['id']
+    assert r['id'] == TRACKER_ID_123['id']
 
 def test_get_trackers():
     r = FALCONLIB.get_trackers()
     assert FALCONLIB.last_response.status_code == 200
-    assert len(r.payload['trackers']) == 2
-    assert r.payload['trackers'][0]['id'] == TRACKER_ID_123['id'] or TRACKER_ID_124['id']
-    assert r.payload['trackers'][1]['id'] == TRACKER_ID_123['id'] or TRACKER_ID_124['id']
+    assert len(r) == 2
+    assert r[0]['id'] == TRACKER_ID_123['id'] or TRACKER_ID_124['id']
+    assert r[1]['id'] == TRACKER_ID_123['id'] or TRACKER_ID_124['id']
 
 def test_update_tracker():
-    upd = FALCONLIB.get_tracker(TRACKER_ID_123['id']).payload.copy()
+    upd = FALCONLIB.get_tracker(TRACKER_ID_123['id'])
     upd['name'] = '**Updated Tracker'
     r = FALCONLIB.update_tracker(upd)
     assert FALCONLIB.last_response.status_code == 200
-    assert r.payload['id'] == TRACKER_ID_123['id']
-    r = FALCONLIB.get_tracker(TRACKER_ID_123['id'])
-    assert r.payload['name'] == '**Updated Tracker'
+    assert r['id'] == TRACKER_ID_123['id']
+    upd = FALCONLIB.get_tracker(TRACKER_ID_123['id'])
+    assert upd['name'] == '**Updated Tracker'
 
 def test_delete_tracker_124():
     r = FALCONLIB.delete_tracker(TRACKER_ID_124['id'])
@@ -141,19 +136,19 @@ def test_delete_tracker_124():
 def test_link_document_1():
     r = FALCONLIB.link_document(TRACKER_ID_123['id'], DOC_1['id'])
     assert FALCONLIB.last_response.status_code == 202
-    assert r.payload['id'] == DOC_1['id']
+    assert r['id'] == DOC_1['id']
 
 def test_link_document_2():
     r = FALCONLIB.link_document(TRACKER_ID_123['id'], DOC_2['id'])
     assert FALCONLIB.last_response.status_code == 202
-    assert r.payload['id'] == DOC_2['id']
+    assert r['id'] == DOC_2['id']
 
 def test_get_documents():
     r = FALCONLIB.get_documents(TRACKER_ID_123['id'])
     assert FALCONLIB.last_response.status_code == 200
-    assert len(r.payload['documents']) == 2
-    assert r.payload['documents'][0]['id'] == DOC_1['id'] or DOC_2['id']
-    assert r.payload['documents'][1]['id'] == DOC_2['id'] or DOC_1['id']
+    assert len(r) == 2
+    assert r[0]['id'] == DOC_1['id'] or DOC_2['id']
+    assert r[1]['id'] == DOC_2['id'] or DOC_1['id']
 
 def test_unlink_document():
     r = FALCONLIB.unlink_document(TRACKER_ID_123['id'], DOC_1['id'])
@@ -162,10 +157,33 @@ def test_unlink_document():
 def test_get_documents_after_unlink():
     r = FALCONLIB.get_documents(TRACKER_ID_123['id'])
     assert FALCONLIB.last_response.status_code == 200
-    assert len(r.payload['documents']) == 1
-    assert r.payload['documents'][0]['id'] == DOC_2['id']
+    assert len(r) == 1
+    assert r[0]['id'] == DOC_2['id']
 
 # Test Document Delete (after we've tested linking and unlinking)
 def test_delete_document():
     r = FALCONLIB.delete_document(DOC_1['id'])
     assert FALCONLIB.last_response.status_code == 200
+
+def main():
+    test_authenticate_user()
+    test_add_document_1()
+    #test_add_document_2()
+    test_get_document()
+    test_update_document_version_fail()
+    test_update_document_version_success()
+    #test_create_tracker_123()
+    #test_create_tracker_124()
+    #test_get_tracker()
+    #test_get_trackers()
+    #test_update_tracker()
+    #test_delete_tracker_124()
+    #test_link_document_1()
+    #test_link_document_2()
+    #test_get_documents()
+    #test_unlink_document()
+    #test_get_documents_after_unlink()
+    #test_delete_document()
+
+if __name__ == '__main__':
+    main()

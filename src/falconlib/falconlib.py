@@ -3,7 +3,28 @@ falconlib.py - Client side library for Falcon API
 """
 import json
 import requests
+from pydantic import BaseModel
 
+class FalconStatus(BaseModel):
+    """
+    Falcon status
+    """
+    success: bool
+    message: str
+    http_status: int
+    payload: dict
+
+def _success(http_status: int, message: str, payload: dict) -> dict:
+    """
+    Create a success response
+    """
+    return FalconStatus(**{'success': True, 'message': message, 'http_status': http_status, 'payload': payload})
+
+def _error(http_status: int, message: str, payload: dict) -> dict:
+    """
+    Create an error response
+    """
+    return FalconStatus(**{'success': False, 'message': message, 'http_status': http_status, 'payload': payload})
 
 class FalconLib:
     """
@@ -29,7 +50,7 @@ class FalconLib:
         self.session = requests.Session()
         self.last_response = None
     
-    def authorize(self, username: str, password: str) -> bool:
+    def authorize(self, username: str, password: str) -> FalconStatus:
         """
         Authorize - Authorize user to Falcon API
 
@@ -48,10 +69,10 @@ class FalconLib:
             self.auth_header = {'Authorization': self.token_type + ' ' + self.auth_token}
             self.session.headers.update(self.auth_header)
             self.username = username
-            return True
-        return False
+            return _success(r.status_code, 'Authorized', r.json())
+        return _error(r.status_code, 'Authorization failed', r.json())
 
-    def create_tracker(self, tracker: dict) -> dict:
+    def create_tracker(self, tracker: dict) -> FalconStatus:
         """
         CreateTracker - Create a tracker
 
@@ -63,17 +84,21 @@ class FalconLib:
         """
         r = self.__post('/trackers', tracker)
         self.last_response = r
-        return r.json()
+        if r.status_code == 201:
+            return _success(r.status_code, 'Tracker created', r.json())
+        return _error(r.status_code, 'Tracker creation failed', r.json())
     
-    def get_tracker(self, tracker_id: str):
+    def get_tracker(self, tracker_id: str) -> FalconStatus:
         """
         GetTracker - Get a tracker
         """
         r = self.__get('/trackers?tracker_id=' + tracker_id)
         self.last_response = r
-        return r.json()
+        if r.status_code == 200:
+            return _success(r.status_code, 'Tracker retrieved', r.json())
+        return _error(r.status_code, 'Tracker retrieval failed', r.json())
     
-    def get_trackers(self, username: str = None) -> list:
+    def get_trackers(self, username: str = None) -> FalconStatus:
         """
         GetTrackers - Get all trackers for a user. If no username is provided,
         all trackers for the authenticated user are returned. Your account must
@@ -89,9 +114,11 @@ class FalconLib:
             r = self.__get('/trackers/user?username=' + username)
         r = self.__get('/trackers/user')
         self.last_response = r
-        return r.json()
+        if r.status_code == 200:
+            return _success(r.status_code, 'Trackers retrieved', {'trackers': r.json()})
+        return _error(r.status_code, 'Trackers retrieval failed', r.json())
     
-    def update_tracker(self, tracker: dict) -> dict:
+    def update_tracker(self, tracker: dict) -> FalconStatus:
         """
         UpdateTracker - Update a tracker.
         
@@ -110,9 +137,11 @@ class FalconLib:
         tracker.pop('documents', None)
         r = self.__put(f'/trackers/', tracker)
         self.last_response = r
-        return r.json()
+        if r.status_code == 200:
+            return _success(r.status_code, 'Tracker updated', r.json())
+        return _error(r.status_code, 'Tracker update failed', r.json())
     
-    def delete_tracker(self, tracker_id: str) -> dict:
+    def delete_tracker(self, tracker_id: str) -> FalconStatus:
         """
         DeleteTracker - Delete a tracker
 
@@ -124,9 +153,11 @@ class FalconLib:
         """
         r = self.__delete(f'/trackers/?tracker_id={tracker_id}')
         self.last_response = r
-        return r.json()
+        if r.status_code == 200:
+            return _success(r.status_code, 'Tracker deleted', r.json())
+        return _error(r.status_code, 'Tracker deletion failed', r.json())
     
-    def add_document(self, document: dict) -> dict:
+    def add_document(self, document: dict) -> FalconStatus:
         """
         AddDocument - Add a document to the database
 
@@ -141,9 +172,11 @@ class FalconLib:
         """
         r = self.__post(f'/documents', document)
         self.last_response = r
-        return r.json()
+        if r.status_code == 201:
+            return _success(r.status_code, 'Document added', r.json())
+        return _error(r.status_code, 'Document addition failed', r.json())
 
-    def get_document(self, document_id: str) -> dict:
+    def get_document(self, document_id: str) -> FalconStatus:
         """
         GetDocument - Get a document
 
@@ -155,11 +188,11 @@ class FalconLib:
         """
         r = self.__get('/documents?doc_id=' + document_id)
         self.last_response = r
-        print(json.dumps(r.json(), indent=4))
-        return r.json()
-        return r.json()
+        if r.status_code == 200:
+            return _success(r.status_code, 'Document retrieved', r.json())
+        return _error(r.status_code, 'Document retrieval failed', r.json())
     
-    def get_documents(self, tracker_id: str) -> list:
+    def get_documents(self, tracker_id: str) -> FalconStatus:
         """
         GetDocuments - Get all documents for a tracker.
 
@@ -171,9 +204,11 @@ class FalconLib:
         """
         r = self.__get(f'/trackers/{tracker_id}/documents')
         self.last_response = r
-        return r.json()
+        if r.status_code == 200:
+            return _success(r.status_code, 'Documents retrieved', {'documents': r.json()})
+        return _error(r.status_code, 'Documents retrieval failed', r.json())
     
-    def update_document(self, document: dict) -> dict:
+    def update_document(self, document: dict) -> FalconStatus:
         """
         UpdateDocument - Update a document
 
@@ -189,9 +224,11 @@ class FalconLib:
         """
         r = self.__put(f'/documents/', document)
         self.last_response = r
-        return r.json()
+        if r.status_code == 200:
+            return _success(r.status_code, 'Document updated', r.json())
+        return _error(r.status_code, 'Document update failed', r.json())
     
-    def delete_document(self, document_id: str, casecade: bool = True) -> dict:
+    def delete_document(self, document_id: str, casecade: bool = True) -> FalconStatus:
         """
         DeleteDocument - Delete a document
     
@@ -203,9 +240,11 @@ class FalconLib:
         """
         r = self.__delete(f'/documents/?doc_id={document_id}&cascade={casecade}')
         self.last_response = r
-        return r.json()
+        if r.status_code == 200:
+            return _success(r.status_code, 'Document deleted', r.json())
+        return _error(r.status_code, 'Document deletion failed', r.json())
 
-    def link_document(self, tracker_id: str, document_id: str) -> dict:
+    def link_document(self, tracker_id: str, document_id: str) -> FalconStatus:
         """
         LinkDocument - Link a document to a tracker
 
@@ -218,9 +257,11 @@ class FalconLib:
         """
         r = self.__patch(f'/trackers/{tracker_id}/documents/link/{document_id}')
         self.last_response = r
-        return r.json()
+        if r.status_code == 202:
+            return _success(r.status_code, 'Document linked', r.json())
+        return _error(r.status_code, 'Document linking failed', r.json())
     
-    def unlink_document(self, tracker_id: str, document_id: str) -> dict:
+    def unlink_document(self, tracker_id: str, document_id: str) -> FalconStatus:
         """
         UnlinkDocument - Unlink a document from a tracker
 
@@ -233,7 +274,9 @@ class FalconLib:
         """
         r = self.__patch(f'/trackers/{tracker_id}/documents/unlink/{document_id}')
         self.last_response = r
-        return r.json()
+        if r.status_code == 200:
+            return _success(r.status_code, 'Document unlinked', r.json())
+        return _error(r.status_code, 'Document unlinking failed', r.json())
 
     def __get(self, url: str):
         """
