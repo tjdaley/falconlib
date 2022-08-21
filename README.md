@@ -1,6 +1,23 @@
 # falconlib
 Python client lib for accessing Falcon API
 
+<p align="center">
+    <a href="https://github.com/tjdaley/falconlib/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/tjdaley/falconlib"></a>
+    <a href="https://github.com/tjdaley/falconlib/network"><img alt="GitHub forks" src="https://img.shields.io/github/forks/tjdaley/falconlib"></a>
+    <a href="https://github.com/tjdaley/falconlib/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/tjdaley/falconlib"><a>
+    <img alt="PyPI - License" src="https://img.shields.io/pypi/l/falconlib">
+    <img alt="Stage: Development" src="https://img.shields.io/badge/stage-Development-orange">
+</p>
+<p align="center">
+    <a href="#purpose">Purpose</a> &bull;
+    <a href="#installation">Installation</a> &bull;
+    <a href="#notes">Notes</a> &bull;
+    <a href="#document_management">Document Management</a> &bull;
+    <a href="#author">Author</a>
+</p>
+
+## Purpose
+
 *Falconlib* is the preferred means of accessing my back-end services. With the proper credentials,
 you can access some of those back-end services through the *requests* pacakge, but they change
 frequently and move from endpoint to endpoint. *Falconlib* smoothes out those developmental
@@ -172,3 +189,7 @@ assert falconlib.last_response.status_code == 200
 ```
 
 # TRACKER MANAGEMENT
+
+## Author
+
+Thomas J. Daley, J.D. is an active family law litigation attorney practicing primarily in Collin County, Texas and software developer. My family law practice is limited to divorce, child custody, child support, enforcment, and modification suits. [Web Site](https://koonsfuller.com/attorneys/tom-daley/)
