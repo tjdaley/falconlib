@@ -176,17 +176,27 @@ class FalconLib:
             return _success(r.status_code, 'Document added', r.json())
         return _error(r.status_code, 'Document addition failed', r.json())
 
-    def get_document(self, document_id: str) -> FalconStatus:
+    def get_document(self, document_id: str = None, path: str = None) -> FalconStatus:
         """
-        GetDocument - Get a document
+        Get a document from the database.
+        You can specify either the document_id or the path. If you specify both,
+        the document_id takes precedence. You must specify one of the two.
 
         Args:
-            document_id (str): Document to get
+            document_id (str): Document to get (Optional)
+            path (str): Path to document to get (Optional)
         
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__get('/documents?doc_id=' + document_id)
+        if not document_id and not path:
+            raise ValueError('You must specify either the document_id or the path')
+        
+        if document_id:
+            r = self.__get('/documents?doc_id=' + document_id)
+        else:
+            r = self.__get('/documents?path=' + path)
+
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Document retrieved', r.json())

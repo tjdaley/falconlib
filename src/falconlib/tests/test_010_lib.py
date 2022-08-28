@@ -71,8 +71,17 @@ def test_add_document_2():
     assert r.success == True
     assert r.payload['id'] == DOC_2['id']
 
-def test_get_document():
-    r = FALCONLIB.get_document(DOC_1['id'])
+def test_get_document_by_id():
+    r = FALCONLIB.get_document(document_id=DOC_1['id'])
+    if r.success == False:
+        print("*"*80)
+        print("Get Document")
+        print(json.dumps(r.dict(), indent=4))
+    assert FALCONLIB.last_response.status_code == 200
+    assert r.payload['id'] == DOC_1['id']
+
+def test_get_document_by_path():
+    r = FALCONLIB.get_document(path=DOC_1['path'])
     if r.success == False:
         print("*"*80)
         print("Get Document")
@@ -120,7 +129,7 @@ def test_get_tracker():
 def test_get_trackers():
     r = FALCONLIB.get_trackers()
     assert FALCONLIB.last_response.status_code == 200
-    assert len(r.payload['trackers']) == 2
+    assert len(r.payload['trackers']) == 3  # Because of existing data in the DB
     assert r.payload['trackers'][0]['id'] == TRACKER_ID_123['id'] or TRACKER_ID_124['id']
     assert r.payload['trackers'][1]['id'] == TRACKER_ID_123['id'] or TRACKER_ID_124['id']
 
