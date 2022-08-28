@@ -111,11 +111,15 @@ assert falconlib.last_response.status_code == 201
 ```
 ## Retrieve a Document from the Database
 
-### *get_document(document_id: str) -> FalconStatus*
+### *get_document(document_id: str, path: str) -> FalconStatus*
 
 ***Arguments***
 
-(str): *id* of the document to be retrieved.
+document_id (str): *id* of the document to be retrieved. (optional)
+path (str): *path* of the document to be retrieved. (optional)
+
+You must provide *either* a *document_id* or a *path*. If you provide both, then
+*document_id* will be used. If you provide neither, the call will raise an exception.
 
 ***Result***
 
