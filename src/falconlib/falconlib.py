@@ -176,7 +176,7 @@ class FalconLib:
             return _success(r.status_code, 'Document added', r.json())
         return _error(r.status_code, 'Document addition failed', r.json())
 
-    def add_extended_docment_properties(self, properties: dict) -> FalconStatus:
+    def add_extended_document_properties(self, properties: dict) -> FalconStatus:
         """
         AddExtendedDocumentProperties - Add extended document properties
 

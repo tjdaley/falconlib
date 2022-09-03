@@ -114,7 +114,7 @@ def test_update_document_version_success():
 
 def test_add_extended_properties():
     props = {'id': DOC_1['id'], 'text': 'This is a test'}
-    r = FALCONLIB.add_extended_docment_properties(props)
+    r = FALCONLIB.add_extended_document_properties(props)
     assert r.success == True
     assert r.payload['id'] == DOC_1['id']
 
