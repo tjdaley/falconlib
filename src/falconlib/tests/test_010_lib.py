@@ -112,6 +112,31 @@ def test_update_document_version_success():
     r = FALCONLIB.get_document(DOC_1['id'])
     assert r.payload['title'] == '**Updated Document'
 
+def test_add_extended_properties():
+    props = {'id': DOC_1['id'], 'text': 'This is a test'}
+    r = FALCONLIB.add_extended_docment_properties(props)
+    assert r.success == True
+    assert r.payload['id'] == DOC_1['id']
+
+def test_get_extended_properties():
+    r = FALCONLIB.get_extended_document_properties(DOC_1['id'])
+    assert r.success == True
+    assert r.payload['id'] == DOC_1['id']
+
+def test_update_extended_properties():
+    props = FALCONLIB.get_extended_document_properties(DOC_1['id']).payload.copy()
+    props['text'] = 'This is an updated test'
+    r = FALCONLIB.update_extended_document_properties(props)
+    assert r.success == True
+    assert r.payload['id'] == DOC_1['id']
+    props = FALCONLIB.get_extended_document_properties(DOC_1['id']).payload.copy()
+    assert props['text'] == 'This is an updated test'
+
+def test_delete_extended_properties():
+    r = FALCONLIB.delete_extended_document_properties(DOC_1['id'])
+    assert r.success == True
+    assert r.payload['id'] == DOC_1['id']
+
 # Tracker Tests
 def test_create_tracker_123():
     r = FALCONLIB.create_tracker(TRACKER_ID_123)

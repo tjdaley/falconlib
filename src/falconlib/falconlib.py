@@ -176,6 +176,22 @@ class FalconLib:
             return _success(r.status_code, 'Document added', r.json())
         return _error(r.status_code, 'Document addition failed', r.json())
 
+    def add_extended_docment_properties(self, properties: dict) -> FalconStatus:
+        """
+        AddExtendedDocumentProperties - Add extended document properties
+
+        Args:
+            properties (dict): Extended document properties to add
+        
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__post(f'/documents/props', properties)
+        self.last_response = r
+        if r.status_code == 201:
+            return _success(r.status_code, 'Extended document properties added', r.json())
+        return _error(r.status_code, 'Extended document properties addition failed', r.json())
+
     def get_document(self, document_id: str = None, path: str = None) -> FalconStatus:
         """
         Get a document from the database.
@@ -201,6 +217,22 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Document retrieved', r.json())
         return _error(r.status_code, 'Document retrieval failed', r.json())
+    
+    def get_extended_document_properties(self, document_id: str) -> FalconStatus:
+        """
+        GetExtendedDocumentProperties - Get extended document properties
+
+        Args:
+            document_id (str): Document to get extended properties for.
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__get('/documents/props/?doc_id=' + document_id)
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Extended document properties retrieved', r.json())
+        return _error(r.status_code, 'Extended document properties retrieval failed', r.json())
     
     def get_documents(self, tracker_id: str) -> FalconStatus:
         """
@@ -238,6 +270,22 @@ class FalconLib:
             return _success(r.status_code, 'Document updated', r.json())
         return _error(r.status_code, 'Document update failed', r.json())
     
+    def update_extended_document_properties(self, properties: dict) -> FalconStatus:
+        """
+        UpdateExtendedDocumentProperties - Update extended document properties
+
+        Args:
+            properties (dict): Extended document properties to update
+        
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__put(f'/documents/props/', properties)
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Extended document properties updated', r.json())
+        return _error(r.status_code, 'Extended document properties update failed', r.json())
+    
     def delete_document(self, document_id: str, casecade: bool = True) -> FalconStatus:
         """
         DeleteDocument - Delete a document
@@ -253,6 +301,22 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Document deleted', r.json())
         return _error(r.status_code, 'Document deletion failed', r.json())
+    
+    def delete_extended_document_properties(self, document_id: str) -> FalconStatus:
+        """
+        DeleteExtendedDocumentProperties - Delete extended document properties
+
+        Args:
+            document_id (str): Document to delete extended properties for.
+        
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__delete(f'/documents/props/?doc_id={document_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Extended document properties deleted', r.json())
+        return _error(r.status_code, 'Extended document properties deletion failed', r.json())
 
     def link_document(self, tracker_id: str, document_id: str) -> FalconStatus:
         """
