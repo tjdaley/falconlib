@@ -8,7 +8,7 @@ import falconlib
 
 API_VERSION = '1_0'
 SERVER = 'http://localhost:8000'
-xSERVER = 'https://api.jdbot.us'
+SERVER = 'https://api.jdbot.us'
 PREFIX = f'/api/v{API_VERSION}'
 
 test_user = {

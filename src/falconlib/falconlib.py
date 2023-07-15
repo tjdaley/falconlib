@@ -233,6 +233,54 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Extended document properties retrieved', r.json())
         return _error(r.status_code, 'Extended document properties retrieval failed', r.json())
+
+    def get_csv_tables(self, document_id: str) -> FalconStatus:
+        """
+        GetCsvTables - Get CSV tables from a document
+
+        Args:
+            document_id (str): Document to get CSV tables from
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__get('/documents/tables/?doc_id=' + document_id)
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'CSV tables retrieved', r.json())
+        return _error(r.status_code, 'CSV tables retrieval failed', r.json())
+    
+    def get_tracker_categories(self, tracker_id: str) -> FalconStatus:
+        """
+        GetTrackerCategories - Get categories for a tracker
+
+        Args:
+            tracker_id (str): Tracker to get categories for
+        
+        Returns:
+            (list): List of categories
+        """
+        r = self.__get(f'/trackers/{tracker_id}/categories')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Categories retrieved', {'categories': r.json()})
+        return _error(r.status_code, 'Categories retrieval failed', r.json())
+    
+    def get_tracker_category_subcategory_pairs(self, tracker_id: str) -> FalconStatus:
+        """
+        GetTrackerCategorySubcategoryPairs - Get category/subcategory pairs for a tracker
+
+        Args:
+            tracker_id (str): Tracker to get category/subcategory pairs for
+        
+        Returns:
+            (list): List of category/subcategory pairs
+        """
+        r = self.__get(f'/trackers/{tracker_id}/category_subcategory_pairs')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Category/subcategory pairs retrieved', {'category_subcategory_pairs': r.json()})
+        return _error(r.status_code, 'Category/subcategory pairs retrieval failed', r.json())
     
     def get_documents(self, tracker_id: str) -> FalconStatus:
         """
