@@ -244,11 +244,27 @@ class FalconLib:
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__get('/documents/tables/?doc_id=' + document_id)
+        r = self.__get('/documents/tables/csv/?doc_id=' + document_id)
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'CSV tables retrieved', r.json())
         return _error(r.status_code, 'CSV tables retrieval failed', r.json())
+    
+    def get_json_tables(self, document_id: str) -> FalconStatus:
+        """
+        GetJsonTables - Get JSON tables from a document
+
+        Args:
+            document_id (str): Document to get JSON tables from
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__get('/documents/tables/json/?doc_id=' + document_id)
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'JSON tables retrieved', r.json())
+        return _error(r.status_code, 'JSON tables retrieval failed', r.json())
     
     def get_tracker_categories(self, tracker_id: str) -> FalconStatus:
         """

@@ -212,4 +212,4 @@ For detailed instructions, visit (https://packaging.python.org)[https://packagin
 
 # Author
 
-Thomas J. Daley, J.D. is an active family law litigation attorney practicing primarily in Collin County, Texas and software developer. My family law practice is limited to divorce, child custody, child support, enforcment, and modification suits. [Web Site](https://koonsfuller.com/attorneys/tom-daley/)
+Thomas J. Daley, J.D. is an active, board certified family law litigation attorney practicing primarily in Collin County, Texas and software developer. My family law practice is limited to divorce, child custody, child support, enforcment, and modification suits. [Web Site](https://koonsfuller.com/attorneys/tom-daley/)
