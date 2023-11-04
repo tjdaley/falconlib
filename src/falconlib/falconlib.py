@@ -1,9 +1,9 @@
 """
 falconlib.py - Client side library for Falcon API
 """
-import json
 import requests
 from pydantic import BaseModel
+
 
 class FalconStatus(BaseModel):
     """
@@ -37,7 +37,7 @@ class FalconLib:
         Args:
             base_url (str): Base URL of Falcon API
             version (str): Version of Falcon API
-        
+
         Returns:
             None
         """
@@ -49,7 +49,7 @@ class FalconLib:
         self.username = None
         self.session = requests.Session()
         self.last_response = None
-    
+
     def authorize(self, username: str, password: str) -> FalconStatus:
         """
         Authorize - Authorize user to Falcon API
@@ -57,7 +57,7 @@ class FalconLib:
         Args:
             username (str): Username of user
             password (str): Password of user
-        
+
         Returns:
             (bool): True if authorized, False if not. You can inquire the last_response for more information.
         """
@@ -78,7 +78,7 @@ class FalconLib:
 
         Args:
             tracker (dict): Tracker to create
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
@@ -87,7 +87,7 @@ class FalconLib:
         if r.status_code == 201:
             return _success(r.status_code, 'Tracker created', r.json())
         return _error(r.status_code, 'Tracker creation failed', r.json())
-    
+
     def get_tracker(self, tracker_id: str) -> FalconStatus:
         """
         GetTracker - Get a tracker
@@ -97,7 +97,7 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Tracker retrieved', r.json())
         return _error(r.status_code, 'Tracker retrieval failed', r.json())
-    
+
     def get_trackers(self, username: str = None) -> FalconStatus:
         """
         GetTrackers - Get all trackers for a user. If no username is provided,
@@ -106,7 +106,7 @@ class FalconLib:
 
         Args:
             username (str): Username of user
-        
+
         Returns:
             (list): List of trackers
         """
@@ -117,30 +117,30 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Trackers retrieved', {'trackers': r.json()})
         return _error(r.status_code, 'Trackers retrieval failed', r.json())
-    
+
     def update_tracker(self, tracker: dict) -> FalconStatus:
         """
         UpdateTracker - Update a tracker.
-        
+
         You cannot update the username or
         documents list. *All* fields in the tracker are updated. If you
         omit a field, the field will be set to None on the server. The best
         practice is to retrieve the current trcker, update fields that you want
         to change, and submit the updated tracker.
-    
+
         Args:
             tracker (dict): Tracker to update
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
         tracker.pop('documents', None)
-        r = self.__put(f'/trackers/', tracker)
+        r = self.__put('/trackers/', tracker)
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Tracker updated', r.json())
         return _error(r.status_code, 'Tracker update failed', r.json())
-    
+
     def delete_tracker(self, tracker_id: str) -> FalconStatus:
         """
         DeleteTracker - Delete a tracker
@@ -156,7 +156,7 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Tracker deleted', r.json())
         return _error(r.status_code, 'Tracker deletion failed', r.json())
-    
+
     def add_document(self, document: dict) -> FalconStatus:
         """
         AddDocument - Add a document to the database
@@ -166,11 +166,11 @@ class FalconLib:
 
         Args:
             document (dict): Document to add
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__post(f'/documents', document)
+        r = self.__post('/documents', document)
         self.last_response = r
         if r.status_code == 201:
             return _success(r.status_code, 'Document added', r.json())
@@ -182,7 +182,7 @@ class FalconLib:
 
         Args:
             properties (dict): Extended document properties to add
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
@@ -201,13 +201,13 @@ class FalconLib:
         Args:
             document_id (str): Document to get (Optional)
             path (str): Path to document to get (Optional)
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
         if not document_id and not path:
             raise ValueError('You must specify either the document_id or the path')
-        
+
         if document_id:
             r = self.__get('/documents?doc_id=' + document_id)
         else:
@@ -217,7 +217,7 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Document retrieved', r.json())
         return _error(r.status_code, 'Document retrieval failed', r.json())
-    
+
     def get_extended_document_properties(self, document_id: str) -> FalconStatus:
         """
         GetExtendedDocumentProperties - Get extended document properties
@@ -249,7 +249,7 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'CSV tables retrieved', r.json())
         return _error(r.status_code, 'CSV tables retrieval failed', r.json())
-    
+
     def get_json_tables(self, document_id: str) -> FalconStatus:
         """
         GetJsonTables - Get JSON tables from a document
@@ -265,14 +265,14 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'JSON tables retrieved', r.json())
         return _error(r.status_code, 'JSON tables retrieval failed', r.json())
-    
+
     def get_tracker_categories(self, tracker_id: str) -> FalconStatus:
         """
         GetTrackerCategories - Get categories for a tracker
 
         Args:
             tracker_id (str): Tracker to get categories for
-        
+
         Returns:
             (list): List of categories
         """
@@ -281,14 +281,14 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Categories retrieved', {'categories': r.json()})
         return _error(r.status_code, 'Categories retrieval failed', r.json())
-    
+
     def get_tracker_category_subcategory_pairs(self, tracker_id: str) -> FalconStatus:
         """
         GetTrackerCategorySubcategoryPairs - Get category/subcategory pairs for a tracker
 
         Args:
             tracker_id (str): Tracker to get category/subcategory pairs for
-        
+
         Returns:
             (list): List of category/subcategory pairs
         """
@@ -297,14 +297,14 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Category/subcategory pairs retrieved', {'category_subcategory_pairs': r.json()})
         return _error(r.status_code, 'Category/subcategory pairs retrieval failed', r.json())
-    
+
     def get_documents(self, tracker_id: str) -> FalconStatus:
         """
         GetDocuments - Get all documents for a tracker.
 
         Args:
             tracker_id (str): Tracker to get documents for
-        
+
         Returns:
             (list): List of documents.
         """
@@ -313,7 +313,7 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Documents retrieved', {'documents': r.json()})
         return _error(r.status_code, 'Documents retrieval failed', r.json())
-    
+
     def update_document(self, document: dict) -> FalconStatus:
         """
         UpdateDocument - Update a document
@@ -324,39 +324,39 @@ class FalconLib:
 
         Args:
             document (dict): Document to update
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__put(f'/documents/', document)
+        r = self.__put('/documents/', document)
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Document updated', r.json())
         return _error(r.status_code, 'Document update failed', r.json())
-    
+
     def update_extended_document_properties(self, properties: dict) -> FalconStatus:
         """
         UpdateExtendedDocumentProperties - Update extended document properties
 
         Args:
             properties (dict): Extended document properties to update
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__put(f'/documents/props/', properties)
+        r = self.__put('/documents/props/', properties)
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Extended document properties updated', r.json())
         return _error(r.status_code, 'Extended document properties update failed', r.json())
-    
+
     def delete_document(self, document_id: str, casecade: bool = True) -> FalconStatus:
         """
         DeleteDocument - Delete a document
-    
+
         Args:
             document_id (str): Document to delete
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
@@ -365,14 +365,14 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Document deleted', r.json())
         return _error(r.status_code, 'Document deletion failed', r.json())
-    
+
     def delete_extended_document_properties(self, document_id: str) -> FalconStatus:
         """
         DeleteExtendedDocumentProperties - Delete extended document properties
 
         Args:
             document_id (str): Document to delete extended properties for.
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
@@ -382,6 +382,26 @@ class FalconLib:
             return _success(r.status_code, 'Extended document properties deleted', r.json())
         return _error(r.status_code, 'Extended document properties deletion failed', r.json())
 
+    def delete_table(self, document_id: str, table_id: str) -> FalconStatus:
+        """
+        DeleteTable - Delete a table from a document
+
+        Args:
+            document_id (str): Document to delete table from
+            table_id (str): Table to delete
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+
+        Falcon API end point sample:
+            documents/tables?doc_id=8b85f87afec74bcbad03400da4f33e58&table_id=a83375db-6af6-4f21-859e-96963c6a06c6
+        """
+        r = self.__delete(f'/documents/tables/?doc_id={document_id}&table_id={table_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Table deleted', r.json())
+        return _error(r.status_code, 'Table deletion failed', r.json())
+
     def link_document(self, tracker_id: str, document_id: str) -> FalconStatus:
         """
         LinkDocument - Link a document to a tracker
@@ -389,7 +409,7 @@ class FalconLib:
         Args:
             tracker_id (str): Tracker to link document to
             document_id (str): Document to link to tracker
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
@@ -398,7 +418,7 @@ class FalconLib:
         if r.status_code == 202:
             return _success(r.status_code, 'Document linked', r.json())
         return _error(r.status_code, 'Document linking failed', r.json())
-    
+
     def unlink_document(self, tracker_id: str, document_id: str) -> FalconStatus:
         """
         UnlinkDocument - Unlink a document from a tracker
@@ -406,7 +426,7 @@ class FalconLib:
         Args:
             tracker_id (str): Tracker to unlink document from
             document_id (str): Document to unlink from tracker
-        
+
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
