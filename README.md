@@ -208,6 +208,15 @@ Finally, upload the new version:
 
 ```py -m twine upload dist/*```
 
+**NOTE**:
+For the upload, your
+
+1. username is ```__token__```
+2. password is a project-scoped token
+
+On Windows, you **cannot** use ```CTRL-V``` to paste the project-scoped token. You **MUST** right click the command shell window and select ```Edit->Paste```.
+
+
 For detailed instructions, visit (https://packaging.python.org)[https://packaging.python.org/en/latest/tutorials/packaging-projects/].
 
 # Author
