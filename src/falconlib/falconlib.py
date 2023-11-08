@@ -112,7 +112,8 @@ class FalconLib:
         """
         if username:
             r = self.__get('/trackers/user?username=' + username)
-        r = self.__get('/trackers/user')
+        else:
+            r = self.__get('/trackers/user')
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Trackers retrieved', {'trackers': r.json()})
