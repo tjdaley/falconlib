@@ -209,9 +209,9 @@ class FalconLib:
             raise ValueError('You must specify either the document_id or the path')
 
         if document_id:
-            r = self.__get('/documents?doc_id=' + document_id)
+            r = self.__get('/documents/?doc_id=' + document_id)
         else:
-            r = self.__get('/documents?path=' + path)
+            r = self.__get('/documents/?path=' + path)
 
         self.last_response = r
         if r.status_code == 200:
