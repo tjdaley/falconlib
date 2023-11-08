@@ -151,7 +151,7 @@ class FalconLib:
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__delete(f'/trackers/?tracker_id={tracker_id}')
+        r = self.__delete(f'/trackers?tracker_id={tracker_id}')
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Tracker deleted', r.json())
@@ -228,7 +228,7 @@ class FalconLib:
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__get('/documents/props/?doc_id=' + document_id)
+        r = self.__get('/documents/props?doc_id=' + document_id)
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Extended document properties retrieved', r.json())
@@ -244,7 +244,7 @@ class FalconLib:
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__get('/documents/tables/csv/?doc_id=' + document_id)
+        r = self.__get('/documents/tables/csv?doc_id=' + document_id)
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'CSV tables retrieved', r.json())
@@ -260,7 +260,7 @@ class FalconLib:
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__get('/documents/tables/json/?doc_id=' + document_id)
+        r = self.__get('/documents/tables/json?doc_id=' + document_id)
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'JSON tables retrieved', r.json())
@@ -360,7 +360,7 @@ class FalconLib:
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__delete(f'/documents/?doc_id={document_id}&cascade={casecade}')
+        r = self.__delete(f'/documents?doc_id={document_id}&cascade={casecade}')
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Document deleted', r.json())
@@ -376,7 +376,7 @@ class FalconLib:
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__delete(f'/documents/props/?doc_id={document_id}')
+        r = self.__delete(f'/documents/props?doc_id={document_id}')
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Extended document properties deleted', r.json())
@@ -396,7 +396,7 @@ class FalconLib:
         Falcon API end point sample:
             documents/tables?doc_id=8b85f87afec74bcbad03400da4f33e58&table_id=a83375db-6af6-4f21-859e-96963c6a06c6
         """
-        r = self.__delete(f'/documents/tables/?doc_id={document_id}&table_id={table_id}')
+        r = self.__delete(f'/documents/tables?doc_id={document_id}&table_id={table_id}')
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Table deleted', r.json())
