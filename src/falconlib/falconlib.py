@@ -1,6 +1,7 @@
 """
 falconlib.py - Client side library for Falcon API
 """
+import uuid
 import requests
 from pydantic import BaseModel
 
@@ -436,6 +437,32 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Document unlinked', r.json())
         return _error(r.status_code, 'Document unlinking failed', r.json())
+    
+    def enqueue(self, task: str, payload: dict, ttl: int = 4) -> FalconStatus:
+        """
+        Enqueue - Enqueue a task
+
+        Args:
+            task (str): Task to enqueue
+            payload (dict): Payload to enqueue
+            ttl (int): Time to live
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        request_id = str(uuid.uuid4())
+        work_request = {
+            'task': task,
+            'payload': payload,
+            'ttl': ttl,
+            'username': self.username if self.username else 'anonymous',
+            'request_id': request_id
+        }
+        r = self.__post(f'/util/enqueue', work_request)
+        self.last_response = r
+        if r.status_code == 201:
+            return _success(r.status_code, f'Task enqueued: {request_id}', r.json())
+        return _error(r.status_code, 'Task enqueue failed', r.json())
 
     def __get(self, url: str):
         """
