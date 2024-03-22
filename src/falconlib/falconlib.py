@@ -75,6 +75,15 @@ class FalconLib:
             self.password = password
             return _success(r.status_code, 'Authorized', r.json())
         return _error(r.status_code, 'Authorization failed', r.json())
+    
+    def reauthorize(self) -> FalconStatus:
+        """
+        Reauthorize - Reauthorize user to Falcon API
+
+        Returns:
+            (FalconStatus): You can inquire the last_response for more information.
+        """
+        return self.authorize(self.username, self.password)
 
     def create_tracker(self, tracker: dict) -> FalconStatus:
         """
@@ -484,7 +493,7 @@ class FalconLib:
         response = method(**kwargs)
         self.last_response = response
         if response.status_code == 401:
-            self.authorize(self.username, self.password)
+            self.reauthorize()
             response = method(**kwargs)
             self.last_response = response
         return response
