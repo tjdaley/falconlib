@@ -50,6 +50,8 @@ class FalconLib:
         self.username = None
         self.session = requests.Session()
         self.last_response = None
+        self.username = None
+        self.password = None
 
     def authorize(self, username: str, password: str) -> FalconStatus:
         """
@@ -70,6 +72,7 @@ class FalconLib:
             self.auth_header = {'Authorization': self.token_type + ' ' + self.auth_token}
             self.session.headers.update(self.auth_header)
             self.username = username
+            self.password = password
             return _success(r.status_code, 'Authorized', r.json())
         return _error(r.status_code, 'Authorization failed', r.json())
 
@@ -463,63 +466,85 @@ class FalconLib:
         if r.status_code == 201:
             return _success(r.status_code, f'Task enqueued: {request_id}', r.json())
         return _error(r.status_code, 'Task enqueue failed', r.json())
+    
+    def __httpop(self, method: function, **kwargs) -> requests.Response:
+        """
+        HTTP Operation - Perform an HTTP operation
+
+        Args:
+            method (function): HTTP method
+            **kwargs: Keyword arguments
+            url (str): URL (alwasys required)
+            json (dict): JSON data (optional)
+            data (any): Data (optional)
+
+        Returns:
+            (requests.Response): Response from server
+        """
+        response = method(**kwargs)
+        self.last_response = response
+        if response.status_code == 401:
+            self.authorize(self.username, self.password)
+            response = method(**kwargs)
+            self.last_response = response
+        return response
 
     def __get(self, url: str):
         """
         Get - Get data from Falcon API
         """
-        return self.session.get(self.base_url + url)
+        return self.__httpop(self.session.get, url=self.base_url + url)
 
     def __post(self, url:str, data: dict):
         """
         Post - Post data to Falcon API
         """
-        return self.session.post(self.base_url + url, json=data)
+        return self.__httpop(self.session.post, url=self.base_url + url, json=data)
 
     def __put(self, url: str, data: dict):
         """
         Put - Put data to Falcon API
         """
-        return self.session.put(self.base_url + url, json=data)
+        return self.__httpop(self.session.put, url=self.base_url + url, json=data)
 
     def __delete(self, url: str):
         """
         Delete - Delete data from Falcon API
         """
-        return self.session.delete(self.base_url + url)
+        return self.__httpop(self.session.delete, url=self.base_url + url)
 
     def __patch(self, url: str, data=None):
         """
         Patch - Patch data to Falcon API
         """
-        return self.session.patch(self.base_url + url, data=data)
+        return self.__httpop(self.session.patch, url=self.base_url + url, data=data)
 
     def __options(self, url: str):
         """
         Options - Get options from Falcon API
         """
-        return self.session.options(self.base_url + url)
+        return self.__httpop(self.session.options, url=url=self.base_url + url)
 
     def __head(self, url: str):
         """
         Head - Get head from Falcon API
         """
-        return self.session.head(self.base_url + url)
+        return self.__httpop(self.session.head, url=self.base_url + url)
 
     def __trace(self, url):
         """
         Trace - Get trace from Falcon API
         """
-        return self.session.trace(self.base_url + url)
+        return self.__httpop(self.session.trace, url=self.base_url + url)
 
     def __connect(self, url: str):
         """
         Connect - Get connect from Falcon API
         """
-        return self.session.connect(self.base_url + url)
+        return self.__httpop(self.session.connect, url=self.base_url + url)
 
     def options(self, url):
         """
         Options - Get options from Falcon API
         """
-        return self.session.options(self.base_url + url)
+        return self.__httpop(self.session.options, url=self.base_url + url)
