@@ -523,7 +523,7 @@ class FalconLib:
         """
         Options - Get options from Falcon API
         """
-        return self.__httpop(self.session.options, url=url=self.base_url + url)
+        return self.__httpop(self.session.options, url=self.base_url + url)
 
     def __head(self, url: str):
         """
