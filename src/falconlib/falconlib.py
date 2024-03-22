@@ -1,6 +1,7 @@
 """
 falconlib.py - Client side library for Falcon API
 """
+from typing import Callable
 import uuid
 import requests
 from pydantic import BaseModel
@@ -476,12 +477,12 @@ class FalconLib:
             return _success(r.status_code, f'Task enqueued: {request_id}', r.json())
         return _error(r.status_code, 'Task enqueue failed', r.json())
     
-    def __httpop(self, method: function, **kwargs) -> requests.Response:
+    def __httpop(self, method: Callable, **kwargs) -> requests.Response:
         """
         HTTP Operation - Perform an HTTP operation
 
         Args:
-            method (function): HTTP method
+            method (function): HTTP Requests method
             **kwargs: Keyword arguments
             url (str): URL (alwasys required)
             json (dict): JSON data (optional)
