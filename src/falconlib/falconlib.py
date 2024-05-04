@@ -310,7 +310,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Dataset retrieved', r.json())
-        return _error(r.status_code, 'Dataset retrieval failed', r.json())
+        return _error(r.status_code, 'Dataset retrieval failed', r.text)
 
     def get_tracker_categories(self, tracker_id: str) -> FalconStatus:
         """
