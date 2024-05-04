@@ -1,6 +1,7 @@
 """
 falconlib.py - Client side library for Falcon API
 """
+from enum import Enum
 from typing import Callable
 import uuid
 import requests
@@ -15,6 +16,19 @@ class FalconStatus(BaseModel):
     message: str
     http_status: int
     payload: dict
+
+class FalconDataset(Enum):
+    """
+    Falcon dataset
+    """
+    TRANSFERS = 1
+    CASH_BACK_PURCHASES = 2
+    DEPOSITS = 3
+    CHECKS = 4
+    WIRE_TRANSFERS = 5
+    UNIQUE_ACCOUNTS = 6
+    MISSING_STATEMENTS = 7
+    MISSING_PAGES = 8
 
 def _success(http_status: int, message: str, payload: dict) -> dict:
     """
@@ -280,6 +294,23 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'JSON tables retrieved', r.json())
         return _error(r.status_code, 'JSON tables retrieval failed', r.json())
+    
+    def get_dataset(self, tracker_id: str, dataset: FalconDataset) -> FalconStatus:
+        """
+        GetDataset - Get a dataset from a tracker
+
+        Args:
+            tracker_id (str): Tracker to get dataset from
+            dataset (FalconDataset): Dataset to get
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__get(f'/trackers/{tracker_id}/datasets/{dataset.name}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Dataset retrieved', r.json())
+        return _error(r.status_code, 'Dataset retrieval failed', r.json())
 
     def get_tracker_categories(self, tracker_id: str) -> FalconStatus:
         """
