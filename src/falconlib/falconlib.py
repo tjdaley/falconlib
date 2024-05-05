@@ -29,6 +29,7 @@ class FalconDataset(Enum):
     UNIQUE_ACCOUNTS = 6
     MISSING_STATEMENTS = 7
     MISSING_PAGES = 8
+    TRACKER_LIST = 9
 
 def _success(http_status: int, message: str, payload: dict) -> dict:
     """
