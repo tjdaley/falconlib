@@ -41,6 +41,8 @@ def _error(http_status: int, message: str, payload: dict) -> dict:
     """
     Create an error response
     """
+    if not isinstance(payload, dict):
+        payload = {'error': payload}
     return FalconStatus(**{'success': False, 'message': message, 'http_status': http_status, 'payload': payload})
 
 class FalconLib:
