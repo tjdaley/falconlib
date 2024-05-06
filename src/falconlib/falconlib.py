@@ -296,7 +296,24 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'JSON tables retrieved', r.json())
-        return _error(r.status_code, 'JSON tables retrieval failed', r.json())
+        return _error(r.status_code, 'JSON tables retrieval failed', r.text)
+    
+    def get_compliance_matrix(self, tracker_id: str, classification: str) -> FalconStatus:
+        """
+        GetComplianceMatrix - Get compliance matrix for a tracker
+
+        Args:
+            tracker_id (str): Tracker to get compliance matrix for
+            classification (str): Classification to get compliance matrix for
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__get(f'/trackers/{tracker_id}/compliance_matrix/{classification}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Compliance matrix retrieved', r.json())
+        return _error(r.status_code, 'Compliance matrix retrieval failed', r.text)
     
     def get_dataset(self, tracker_id: str, dataset: FalconDataset) -> FalconStatus:
         """
