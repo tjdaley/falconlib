@@ -526,7 +526,23 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 201:
             return _success(r.status_code, f'Task enqueued: {request_id}', r.json())
-        return _error(r.status_code, 'Task enqueue failed', r.json())
+        return _error(r.status_code, 'Task enqueue failed', r.text)
+    
+    def job_status(self, request_id: str) -> FalconStatus:
+        """
+        JobStatus - Get job status
+
+        Args:
+            request_id (str): Request ID
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__get(f'/util/status?request_id={request_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Job status retrieved', r.json())
+        return _error(r.status_code, 'Job status retrieval failed', r.text)
     
     def __httpop(self, method: Callable, **kwargs) -> requests.Response:
         """
