@@ -566,7 +566,10 @@ class FalconLib:
         r = self.__get(f'/clients/?id={client_id}')
         self.last_response = r
         if r.status_code == 200:
-            return _success(r.status_code, 'Client retrieved', r.json())
+            payload = r.json()
+            if isinstance(payload, list):
+                payload = {'clients': payload}
+            return _success(r.status_code, 'Client retrieved', payload)
         return _error(r.status_code, 'Client retrieval failed', r.text)
     
     def create_client(self, client: dict) -> FalconStatus:
