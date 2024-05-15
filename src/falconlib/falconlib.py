@@ -544,6 +544,79 @@ class FalconLib:
             return _success(r.status_code, 'Job status retrieved', r.json())
         return _error(r.status_code, 'Job status retrieval failed', r.text)
     
+    def get_clients(self) -> FalconStatus:
+        """
+        GetClients - Get all clients
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        return self.get_client('*')
+    
+    def get_client(self, client_id: str) -> FalconStatus:
+        """
+        GetClient - Get a client
+
+        Args:
+            client_id (str): Client ID, '*' means get all clients.
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__get(f'/clients/{client_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Client retrieved', r.json())
+        return _error(r.status_code, 'Client retrieval failed', r.text)
+    
+    def create_client(self, client: dict) -> FalconStatus:
+        """
+        CreateClient - Create a client
+
+        Args:
+            client (dict): Client to create
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__post('/clients', client)
+        self.last_response = r
+        if r.status_code == 201:
+            return _success(r.status_code, 'Client created', r.json())
+        return _error(r.status_code, 'Client creation failed', r.text)
+    
+    def update_client(self, client: dict) -> FalconStatus:
+        """
+        UpdateClient - Update a client
+
+        Args:
+            client (dict): Client to update
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__put('/clients', client)
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Client updated', r.json())
+        return _error(r.status_code, 'Client update failed', r.text)
+    
+    def delete_client(self, client_id: str) -> FalconStatus:
+        """
+        DeleteClient - Delete a client
+
+        Args:
+            client_id (str): Client ID
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__delete(f'/clients/{client_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Client deleted', r.json())
+        return _error(r.status_code, 'Client deletion failed', r.text)
+    
     def __httpop(self, method: Callable, **kwargs) -> requests.Response:
         """
         HTTP Operation - Perform an HTTP operation
