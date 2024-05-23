@@ -70,6 +70,8 @@ class FalconLib:
         self.last_response = None
         self.username = None
         self.password = None
+        self.user_id = None
+        self.twilio_factor_id = None
 
     def authorize(self, username: str, password: str) -> FalconStatus:
         """
@@ -91,6 +93,8 @@ class FalconLib:
             self.session.headers.update(self.auth_header)
             self.username = username
             self.password = password
+            self.user_id = r.json()['user_id']
+            self.twilio_factor_id = r.json().get('twilio_factor_id') or ''
             return _success(r.status_code, 'Authorized', r.json())
         return _error(r.status_code, 'Authorization failed', r.json())
     
