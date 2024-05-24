@@ -21,7 +21,7 @@ class FalconDataset(Enum):
     """
     Falcon dataset
     """
-    TRANSFERS =
+    TRANSFERS = 1
     CASH_BACK_PURCHASES = 2
     DEPOSITS = 3
     CHECKS = 4
