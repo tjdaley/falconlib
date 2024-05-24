@@ -21,7 +21,7 @@ class FalconDataset(Enum):
     """
     Falcon dataset
     """
-    TRANSFERS = 1
+    TRANSFERS =
     CASH_BACK_PURCHASES = 2
     DEPOSITS = 3
     CHECKS = 4
@@ -636,9 +636,9 @@ class FalconLib:
             Either json or text, depending on which one we have.
         """
         try:
-            return r.json()
+            return result.json()
         except ValueError:
-            return r.text
+            return result.text
     
     def __httpop(self, method: Callable, **kwargs) -> requests.Response:
         """
