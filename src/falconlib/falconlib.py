@@ -350,7 +350,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Categories retrieved', {'categories': r.json()})
-        return _error(r.status_code, 'Categories retrieval failed', r.json())
+        return _error(r.status_code, 'Categories retrieval failed', r.text)
 
     def get_tracker_category_subcategory_pairs(self, tracker_id: str) -> FalconStatus:
         """
@@ -366,7 +366,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Category/subcategory pairs retrieved', {'category_subcategory_pairs': r.json()})
-        return _error(r.status_code, 'Category/subcategory pairs retrieval failed', r.json())
+        return _error(r.status_code, 'Category/subcategory pairs retrieval failed', r.text)
 
     def get_documents(self, tracker_id: str) -> FalconStatus:
         """
@@ -382,7 +382,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Documents retrieved', {'documents': r.json()})
-        return _error(r.status_code, 'Documents retrieval failed', r.json())
+        return _error(r.status_code, 'Documents retrieval failed', r.text)
 
     def update_document(self, document: dict) -> FalconStatus:
         """
