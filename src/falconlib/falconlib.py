@@ -96,7 +96,7 @@ class FalconLib:
             self.user_id = r.json()['user_id']
             self.twilio_factor_id = r.json().get('twilio_factor_id') or ''
             return _success(r.status_code, 'Authorized', r.json())
-        return _error(r.status_code, 'Authorization failed', r.json())
+        return _error(r.status_code, 'Authorization failed', self.__json_or_text(r))
     
     def reauthorize(self) -> FalconStatus:
         """
@@ -121,7 +121,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 201:
             return _success(r.status_code, 'Tracker created', r.json())
-        return _error(r.status_code, 'Tracker creation failed', r.json())
+        return _error(r.status_code, 'Tracker creation failed', self.__json_or_text(r))
 
     def get_tracker(self, tracker_id: str) -> FalconStatus:
         """
@@ -131,7 +131,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Tracker retrieved', r.json())
-        return _error(r.status_code, 'Tracker retrieval failed', r.json())
+        return _error(r.status_code, 'Tracker retrieval failed', self.__json_or_text(r))
 
     def get_trackers(self, username: str = None) -> FalconStatus:
         """
@@ -152,7 +152,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Trackers retrieved', {'trackers': r.json()})
-        return _error(r.status_code, 'Trackers retrieval failed', r.json())
+        return _error(r.status_code, 'Trackers retrieval failed', self.__json_or_text(r))
 
     def update_tracker(self, tracker: dict) -> FalconStatus:
         """
@@ -175,7 +175,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Tracker updated', r.json())
-        return _error(r.status_code, 'Tracker update failed', r.json())
+        return _error(r.status_code, 'Tracker update failed', self.__json_or_text(r))
 
     def delete_tracker(self, tracker_id: str) -> FalconStatus:
         """
@@ -191,7 +191,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Tracker deleted', r.json())
-        return _error(r.status_code, 'Tracker deletion failed', r.json())
+        return _error(r.status_code, 'Tracker deletion failed', self.__json_or_text(r))
 
     def add_document(self, document: dict) -> FalconStatus:
         """
@@ -210,7 +210,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 201:
             return _success(r.status_code, 'Document added', r.json())
-        return _error(r.status_code, 'Document addition failed', r.json())
+        return _error(r.status_code, 'Document addition failed', self.__json_or_text(r))
 
     def add_extended_document_properties(self, properties: dict) -> FalconStatus:
         """
@@ -226,7 +226,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 201:
             return _success(r.status_code, 'Extended document properties added', r.json())
-        return _error(r.status_code, 'Extended document properties addition failed', r.json())
+        return _error(r.status_code, 'Extended document properties addition failed', self.__json_or_text(r))
 
     def get_document(self, document_id: str = None, path: str = None) -> FalconStatus:
         """
@@ -252,7 +252,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Document retrieved', r.json())
-        return _error(r.status_code, 'Document retrieval failed', r.json())
+        return _error(r.status_code, 'Document retrieval failed', self.__json_or_text(r))
 
     def get_extended_document_properties(self, document_id: str) -> FalconStatus:
         """
@@ -268,7 +268,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Extended document properties retrieved', r.json())
-        return _error(r.status_code, 'Extended document properties retrieval failed', r.json())
+        return _error(r.status_code, 'Extended document properties retrieval failed', self.__json_or_text(r))
 
     def get_csv_tables(self, document_id: str) -> FalconStatus:
         """
@@ -284,7 +284,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'CSV tables retrieved', r.json())
-        return _error(r.status_code, 'CSV tables retrieval failed', r.json())
+        return _error(r.status_code, 'CSV tables retrieval failed', self.__json_or_text(r))
 
     def get_json_tables(self, document_id: str) -> FalconStatus:
         """
@@ -300,7 +300,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'JSON tables retrieved', r.json())
-        return _error(r.status_code, 'JSON tables retrieval failed', r.text)
+        return _error(r.status_code, 'JSON tables retrieval failed', self.__json_or_text(r))
     
     def get_compliance_matrix(self, tracker_id: str, classification: str) -> FalconStatus:
         """
@@ -317,7 +317,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Compliance matrix retrieved', r.json())
-        return _error(r.status_code, 'Compliance matrix retrieval failed', r.text)
+        return _error(r.status_code, 'Compliance matrix retrieval failed', self.__json_or_text(r))
     
     def get_dataset(self, tracker_id: str, dataset: FalconDataset) -> FalconStatus:
         """
@@ -334,7 +334,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Dataset retrieved', r.json())
-        return _error(r.status_code, 'Dataset retrieval failed', r.text)
+        return _error(r.status_code, 'Dataset retrieval failed', self.__json_or_text(r))
 
     def get_tracker_categories(self, tracker_id: str) -> FalconStatus:
         """
@@ -350,7 +350,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Categories retrieved', {'categories': r.json()})
-        return _error(r.status_code, 'Categories retrieval failed', r.text)
+        return _error(r.status_code, 'Categories retrieval failed', self.__json_or_text(r))
 
     def get_tracker_category_subcategory_pairs(self, tracker_id: str) -> FalconStatus:
         """
@@ -366,7 +366,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Category/subcategory pairs retrieved', {'category_subcategory_pairs': r.json()})
-        return _error(r.status_code, 'Category/subcategory pairs retrieval failed', r.text)
+        return _error(r.status_code, 'Category/subcategory pairs retrieval failed', self.__json_or_text(r))
 
     def get_documents(self, tracker_id: str) -> FalconStatus:
         """
@@ -382,7 +382,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Documents retrieved', {'documents': r.json()})
-        return _error(r.status_code, 'Documents retrieval failed', r.text)
+        return _error(r.status_code, 'Documents retrieval failed', self.__json_or_text(r))
 
     def update_document(self, document: dict) -> FalconStatus:
         """
@@ -403,7 +403,7 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Document updated', r.json())
         print("@@@@ FALCONLIB @@@@", r)
-        return _error(r.status_code, 'Document update failed', r.json())
+        return _error(r.status_code, 'Document update failed', self.__json_or_text(r))
 
     def update_extended_document_properties(self, properties: dict) -> FalconStatus:
         """
@@ -419,7 +419,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Extended document properties updated', r.json())
-        return _error(r.status_code, 'Extended document properties update failed', r.json())
+        return _error(r.status_code, 'Extended document properties update failed', self.__json_or_text(r))
 
     def delete_document(self, document_id: str, casecade: bool = True) -> FalconStatus:
         """
@@ -435,7 +435,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Document deleted', r.json())
-        return _error(r.status_code, 'Document deletion failed', r.json())
+        return _error(r.status_code, 'Document deletion failed', self.__json_or_text(r))
 
     def delete_extended_document_properties(self, document_id: str) -> FalconStatus:
         """
@@ -451,7 +451,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Extended document properties deleted', r.json())
-        return _error(r.status_code, 'Extended document properties deletion failed', r.json())
+        return _error(r.status_code, 'Extended document properties deletion failed', self.__json_or_text(r))
 
     def delete_table(self, document_id: str, table_id: str) -> FalconStatus:
         """
@@ -471,7 +471,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Table deleted', r.json())
-        return _error(r.status_code, 'Table deletion failed', r.json())
+        return _error(r.status_code, 'Table deletion failed', self.__json_or_text(r))
 
     def link_document(self, tracker_id: str, document_id: str) -> FalconStatus:
         """
@@ -488,7 +488,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 202:
             return _success(r.status_code, 'Document linked', r.json())
-        return _error(r.status_code, 'Document linking failed', r.json())
+        return _error(r.status_code, 'Document linking failed', self.__json_or_text(r))
 
     def unlink_document(self, tracker_id: str, document_id: str) -> FalconStatus:
         """
@@ -505,7 +505,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Document unlinked', r.json())
-        return _error(r.status_code, 'Document unlinking failed', r.json())
+        return _error(r.status_code, 'Document unlinking failed', self.__json_or_text(r))
     
     def enqueue(self, task: str, payload: dict, ttl: int = 4) -> FalconStatus:
         """
@@ -531,7 +531,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 201:
             return _success(r.status_code, f'Task enqueued: {request_id}', r.json())
-        return _error(r.status_code, 'Task enqueue failed', r.text)
+        return _error(r.status_code, 'Task enqueue failed', self.__json_or_text(r))
     
     def job_status(self, request_id: str) -> FalconStatus:
         """
@@ -547,7 +547,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Job status retrieved', r.json())
-        return _error(r.status_code, 'Job status retrieval failed', r.text)
+        return _error(r.status_code, 'Job status retrieval failed', self.__json_or_text(r))
     
     def get_clients(self) -> FalconStatus:
         """
@@ -575,7 +575,7 @@ class FalconLib:
             if isinstance(payload, list):
                 payload = {'clients': payload}
             return _success(r.status_code, 'Client retrieved', payload)
-        return _error(r.status_code, 'Client retrieval failed', r.text)
+        return _error(r.status_code, 'Client retrieval failed', self.__json_or_text(r))
     
     def create_client(self, client: dict) -> FalconStatus:
         """
@@ -591,7 +591,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 201:
             return _success(r.status_code, 'Client created', r.json())
-        return _error(r.status_code, 'Client creation failed', r.text)
+        return _error(r.status_code, 'Client creation failed', self.__json_or_text(r))
     
     def update_client(self, client: dict) -> FalconStatus:
         """
@@ -607,7 +607,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Client updated', r.json())
-        return _error(r.status_code, 'Client update failed', r.text)
+        return _error(r.status_code, 'Client update failed', self.__json_or_text(r))
     
     def delete_client(self, client_id: str) -> FalconStatus:
         """
@@ -623,7 +623,22 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Client deleted', r.json())
-        return _error(r.status_code, 'Client deletion failed', r.text)
+        return _error(r.status_code, 'Client deletion failed', self.__json_or_text(r))
+
+    def __json_or_text(self, result):
+        """
+        Return result.json() if possible, otherwise result.text()
+
+        Args:
+            result (requests.result): Result to be examined
+
+        Returns:
+            Either json or text, depending on which one we have.
+        """
+        try:
+            return r.json()
+        except ValueError:
+            return r.text
     
     def __httpop(self, method: Callable, **kwargs) -> requests.Response:
         """
