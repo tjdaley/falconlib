@@ -402,6 +402,7 @@ class FalconLib:
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Document updated', r.json())
+        print("@@@@ FALCONLIB @@@@", r)
         return _error(r.status_code, 'Document update failed', r.json())
 
     def update_extended_document_properties(self, properties: dict) -> FalconStatus:
