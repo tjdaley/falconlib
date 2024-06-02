@@ -107,6 +107,38 @@ class FalconLib:
         """
         return self.authorize(self.username, self.password)
 
+    def register_user(self, user: dict, site_code: str) -> FalconStatus:
+        """
+        Register a new user.
+
+        Args:
+            user (dict): A dict having the following keys:
+                username: str
+                email: str
+                full_name: str
+                password: str
+                twilio_factor_id: Optional[str] = ''
+                phone_number: Optional[str] = ''
+            site_code (str): This site's site code to verify authorization to register users
+
+        Returns:
+            (FalconStatus): You can inquire the last_response for more information
+        """
+        registration = {
+            'username': (user.get('username', '') or '').lower().trim(),
+            'email': (user.get('email', '') or '').lower().trim(),
+            'full_name': (user.get('full_name', '') or '').trim(),
+            'password': (user.get('password', '') or '').trim(),
+            'twilio_factor_id': (user.get('twilio_factor_id', '') or '').trim(),
+            'phone_number': (user.get('phone_number', '') or '').trim(),
+            'site_code': (site_code or '').trim()
+        }
+        r = self.__post('/users/register', registration)
+        self.last_response = r
+        if r.status_code == 201:
+            return _success(r.status_code, 'User registered', r.json())
+        return _error(r.status_code, 'User registration failed', self.__json_or_text(r))
+
     def create_tracker(self, tracker: dict) -> FalconStatus:
         """
         CreateTracker - Create a tracker
