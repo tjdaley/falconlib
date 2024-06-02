@@ -107,6 +107,23 @@ class FalconLib:
         """
         return self.authorize(self.username, self.password)
 
+    def get_user(self, user_id: str, site_code: str) -> FalconStatus:
+        """
+        Retreive a user's record.
+
+        Args:
+            user_id (str): id of user to retrieve
+            site_code (str): authorization code for site
+
+        Returns:
+            FalconStatus
+        """
+        r = self.__get(f'/users/lookup/{user_id}/{site_code}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'User retrieved', r.json())
+        return _error(r.status_code, f'Unable to retreive user with id {user_id}', self.__json_or_text(r))
+
     def register_user(self, user: dict, site_code: str) -> FalconStatus:
         """
         Register a new user.
