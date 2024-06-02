@@ -125,12 +125,12 @@ class FalconLib:
             (FalconStatus): You can inquire the last_response for more information
         """
         registration = {
-            'username': (user.get('username', '') or '').lower().trim(),
-            'email': (user.get('email', '') or '').lower().trim(),
-            'full_name': (user.get('full_name', '') or '').trim(),
-            'password': (user.get('password', '') or '').trim(),
-            'twilio_factor_id': (user.get('twilio_factor_id', '') or '').trim(),
-            'phone_number': (user.get('phone_number', '') or '').trim(),
+            'username': user.username.lower().trim(),
+            'email': user.email.lower().trim(),
+            'full_name': user.full_name.trim(),
+            'password': user.password.trim(),
+            'twilio_factor_id': user.twilio_factor_id.trim(),
+            'phone_number': user.phone_number.trim(),
             'site_code': (site_code or '').trim()
         }
         r = self.__post('/users/register', registration)
