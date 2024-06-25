@@ -87,15 +87,17 @@ class FalconLib:
         r = requests.post(self.base_url + '/users/token', data={'username': username, 'password': password})
         self.last_response = r
         if r.status_code == 200:
-            self.auth_token = r.json()['access_token']
-            self.token_type = r.json()['token_type']
+            user = r.json()
+            self.auth_token = user['access_token']
+            self.token_type = user['token_type']
             self.auth_header = {'Authorization': self.token_type + ' ' + self.auth_token}
             self.session.headers.update(self.auth_header)
             self.username = username
             self.password = password
-            self.user_id = r.json()['user_id']
-            self.twilio_factor_id = r.json().get('twilio_factor_id') or ''
-            return _success(r.status_code, 'Authorized', r.json())
+            self.user_id = user['user_id']
+            self.twilio_factor_id = user.get('twilio_factor_id') or ''
+            self.is_admin = user.get('is_admin') or False
+            return _success(r.status_code, 'Authorized', user)
         return _error(r.status_code, 'Authorization failed', self.__json_or_text(r))
     
     def reauthorize(self) -> FalconStatus:
