@@ -109,6 +109,10 @@ class FalconLib:
         """
         return self.authorize(self.username, self.password)
 
+    #--------------------------------------------------------------------------------
+    # User Management
+    #--------------------------------------------------------------------------------
+    
     def get_user(self, user_id: str, site_code: str) -> FalconStatus:
         """
         Retreive a user's record.
@@ -157,7 +161,117 @@ class FalconLib:
         if r.status_code == 201:
             return _success(r.status_code, 'User registered', r.json())
         return _error(r.status_code, 'User registration failed', self.__json_or_text(r))
+    
+    #--------------------------------------------------------------------------------
+    # Client Management
+    #--------------------------------------------------------------------------------
+    
+    def client_list(self) -> FalconStatus:
+        """
+        Get a list of clients
 
+        Returns:
+            FalconStatus
+        """
+        r = self.__get('/clients/?search_field=client_id&search_value=*')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Clients retrieved', r.json())
+        return _error(r.status_code, 'Unable to retrieve clients', self.__json_or_text(r))
+    
+    def create_client(self, client: dict) -> FalconStatus:
+        """
+        Create a new client
+
+        Args:
+            client (dict): A dict having the following keys:
+                "name": str,
+                "authorized_users": List[str]
+                "billing_number": str,
+                "enabled": True/False
+        Returns:
+            FalconStatus
+        """
+        r = self.__post('/clients', client)
+        self.last_response = r
+        if r.status_code == 201:
+            return _success(r.status_code, 'Client created', r.json())
+        return _error(r.status_code, 'Unable to create client', self.__json_or_text(r))
+    
+    def update_client(self, client: dict) -> FalconStatus:
+        """
+        Update a client
+
+        Args:
+            client (dict): A dict having the following keys:
+                "client_id": str,
+                "name": str,
+                "authorized_users": List[str]
+                "billing_number": str,
+                "enabled": True/False
+        Returns:
+            FalconStatus
+        """
+        r = self.__put('/clients', client)
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Client updated', r.json())
+        return _error(r.status_code, 'Unable to update client', self.__json_or_text(r))
+    
+    def delete_client(self, client_id: str) -> FalconStatus:
+        """
+        Delete a client
+
+        Args:
+            client_id (str): ID of client to delete
+
+        Returns:
+            FalconStatus
+        """
+        r = self.__delete(f'/clients/{client_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Client deleted', r.json())
+        return _error(r.status_code, 'Unable to delete client', self.__json_or_text(r))
+    
+    def add_authorized_user(self, client_id: str, username: str) -> FalconStatus:
+        """
+        Add an authorized user to a client
+
+        Args:
+            client_id (str): ID of client
+            username (str): Username of user to add
+
+        Returns:
+            FalconStatus
+        """
+        r = self.__put(f'/clients/{client_id}/add_authorized_user/{username}', {})
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'User added', r.json())
+        return _error(r.status_code, 'Unable to add user', self.__json_or_text(r))
+    
+    def remove_authorized_user(self, client_id: str, username: str) -> FalconStatus:
+        """
+        Remove an authorized user from a client
+
+        Args:
+            client_id (str): ID of client
+            username (str): Username of user to remove
+
+        Returns:
+            FalconStatus
+        """
+        r = self.__put(f'/clients/{client_id}/remove_authorized_user/{username}', {})
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'User removed', r.json())
+        return _error(r.status_code, 'Unable to remove user', self.__json_or_text(r))
+
+    #--------------------------------------------------------------------------------
+    # Tracker Management
+    #--------------------------------------------------------------------------------
+    
     def create_tracker(self, tracker: dict) -> FalconStatus:
         """
         CreateTracker - Create a tracker
