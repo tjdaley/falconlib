@@ -2,10 +2,10 @@
 falconlib.py - Client side library for Falcon API
 """
 from enum import Enum
-from typing import Callable
+from typing import Callable, Optional
 import uuid
 import requests
-from pydantic import BaseModel, Optional
+from pydantic import BaseModel
 
 
 class FalconStatus(BaseModel):
