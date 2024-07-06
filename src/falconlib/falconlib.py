@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Callable
 import uuid
 import requests
-from pydantic import BaseModel
+from pydantic import BaseModel, Optional
 
 
 class FalconStatus(BaseModel):
@@ -35,6 +35,8 @@ def _success(http_status: int, message: str, payload: dict) -> dict:
     """
     Create a success response
     """
+    if not isinstance(payload, dict):
+        payload = {'value': payload}
     return FalconStatus(**{'success': True, 'message': message, 'http_status': http_status, 'payload': payload})
 
 def _error(http_status: int, message: str, payload: dict) -> dict:
@@ -176,7 +178,7 @@ class FalconLib:
         r = self.__get('/clients/?search_field=client_id&search_value=*')
         self.last_response = r
         if r.status_code == 200:
-            return _success(r.status_code, 'Clients retrieved', r.json())
+            return _success(r.status_code, 'Clients retrieved', {"clients": r.json()})
         return _error(r.status_code, 'Unable to retrieve clients', self.__json_or_text(r))
     
     def create_client(self, client: dict) -> FalconStatus:
