@@ -299,6 +299,22 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Tracker retrieved', r.json())
         return _error(r.status_code, 'Tracker retrieval failed', self.__json_or_text(r))
+    
+    def get_client_trackers(self, client_id: str) -> FalconStatus:
+        """
+        GetClientTrackers - Get all trackers for a client
+
+        Args:
+            client_id (str): ID of client
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__get(f'/trackers/client/{client_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Trackers retrieved', {"trackers": r.json()})
+        return _error(r.status_code, 'Trackers retrieval failed', self.__json_or_text(r))
 
     def get_trackers(self, username: str = None) -> FalconStatus:
         """
