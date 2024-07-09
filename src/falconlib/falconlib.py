@@ -751,7 +751,7 @@ class FalconLib:
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__get(f'/clients/?id={client_id}')
+        r = self.__get(f'/clients/search_field=client_id&search_value={client_id}')
         self.last_response = r
         if r.status_code == 200:
             payload = r.json()
