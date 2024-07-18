@@ -375,6 +375,10 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'Tracker deleted', r.json())
         return _error(r.status_code, 'Tracker deletion failed', self.__json_or_text(r))
+    
+    #--------------------------------------------------------------------------------
+    # Document Management
+    #--------------------------------------------------------------------------------
 
     def add_document(self, document: dict) -> FalconStatus:
         """
