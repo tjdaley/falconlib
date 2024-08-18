@@ -167,19 +167,51 @@ class FalconLib:
     #--------------------------------------------------------------------------------
     # Client Management
     #--------------------------------------------------------------------------------
+    def get_client(self, client_id: str) -> FalconStatus:
+        """
+        GetClient - Get a client
+
+        Args:
+            client_id (str): Client ID, '*' means get all clients.
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__get(f'/clients/?search_field=client_id&search_value={client_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            payload = r.json()
+            if isinstance(payload, list):
+                payload = {'clients': payload}
+            return _success(r.status_code, 'Client retrieved', payload)
+        return _error(r.status_code, 'Client retrieval failed', self.__json_or_text(r))
     
+    def get_clients(self) -> FalconStatus:
+        """
+        NOTE: Duplicate functionality as client_list.
+
+        GetClients - Get all clients
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        return self.get_client('*')
+        
     def client_list(self) -> FalconStatus:
         """
+        NOTE: Duplicate functionality as get_clients.
+
         Get a list of clients
 
         Returns:
             FalconStatus
         """
-        r = self.__get('/clients/?search_field=client_id&search_value=*')
-        self.last_response = r
-        if r.status_code == 200:
-            return _success(r.status_code, 'Clients retrieved', {"clients": r.json()})
-        return _error(r.status_code, 'Unable to retrieve clients', self.__json_or_text(r))
+        return self.get_clients()
+        #r = self.__get('/clients/?search_field=client_id&search_value=*')
+        #self.last_response = r
+        #if r.status_code == 200:
+        #    return _success(r.status_code, 'Clients retrieved', {"clients": r.json()})
+        #return _error(r.status_code, 'Unable to retrieve clients', self.__json_or_text(r))
     
     def create_client(self, client: dict) -> FalconStatus:
         """
@@ -269,6 +301,93 @@ class FalconLib:
         if r.status_code == 200:
             return _success(r.status_code, 'User removed', r.json())
         return _error(r.status_code, 'Unable to remove user', self.__json_or_text(r))
+    
+    #--------------------------------------------------------------------------------
+    # Discovery Management
+    #--------------------------------------------------------------------------------
+    def create_discovery_request(self, discovery_request: dict) -> FalconStatus:
+        """
+        CreateDiscoveryRequest - Create a discovery request
+
+        Args:
+            discovery_request (dict): Discovery request to create
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        # delete any id and version that may have been passed in
+        discovery_request.pop('id', None)
+        discovery_request.pop('version', None)
+
+        r = self.__post('/discovery_requests', discovery_request)
+        self.last_response = r
+        if r.status_code == 201:
+            return _success(r.status_code, 'Discovery request created', r.json())
+        return _error(r.status_code, 'Discovery request creation failed', self.__json_or_text(r))
+    
+    def get_discovery_request(self, discovery_request_id: str) -> FalconStatus:
+        """
+        GetDiscoveryRequest - Get a discovery request
+
+        Args:
+            discovery_request_id (str): ID of discovery request
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__get(f'/discovery_requests/{discovery_request_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Discovery request retrieved', r.json())
+        return _error(r.status_code, 'Discovery request retrieval failed', self.__json_or_text(r))
+    
+    def get_discovery_requests(self, client_id: str) -> FalconStatus:
+        """
+        GetDiscoveryRequests - Get all discovery requests for a client.
+
+        Args:
+            username (str): Username of user
+
+        Returns:
+            (list): List of discovery requests
+        """
+        r = self.__get('/discovery_requests?search_field=client_id&search_value=' + client_id)
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Discovery requests retrieved', {'discovery_requests': r.json()})
+        return _error(r.status_code, 'Discovery requests retrieval failed', self.__json_or_text(r))
+    
+    def update_discovery_request(self, discovery_request: dict) -> FalconStatus:
+        """
+        UpdateDiscoveryRequest - Update a discovery request
+
+        Args:
+            discovery_request (dict): Discovery request to update
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__put('/discovery_requests', discovery_request)
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Discovery request updated', r.json())
+        return _error(r.status_code, 'Discovery request update failed', self.__json_or_text(r))
+    
+    def delete_discovery_request(self, discovery_request_id: str) -> FalconStatus:
+        """
+        DeleteDiscoveryRequest - Delete a discovery request
+
+        Args:
+            discovery_request_id (str): ID of discovery request
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__delete(f'/discovery_requests/{discovery_request_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Discovery request deleted', r.json())
+        return _error(r.status_code, 'Discovery request deletion failed', self.__json_or_text(r))
 
     #--------------------------------------------------------------------------------
     # Tracker Management
@@ -694,6 +813,10 @@ class FalconLib:
             return _success(r.status_code, 'Document unlinked', r.json())
         return _error(r.status_code, 'Document unlinking failed', self.__json_or_text(r))
     
+    #--------------------------------------------------------------------------------
+    # Task Management
+    #--------------------------------------------------------------------------------
+    
     def enqueue(self, task: str, payload: dict, ttl: int = 4) -> FalconStatus:
         """
         Enqueue - Enqueue a task
@@ -736,82 +859,6 @@ class FalconLib:
             return _success(r.status_code, 'Job status retrieved', r.json())
         return _error(r.status_code, 'Job status retrieval failed', self.__json_or_text(r))
     
-    def get_clients(self) -> FalconStatus:
-        """
-        GetClients - Get all clients
-
-        Returns:
-            (dict): Response from server. You can inquire the last_response for more information.
-        """
-        return self.get_client('*')
-    
-    def get_client(self, client_id: str) -> FalconStatus:
-        """
-        GetClient - Get a client
-
-        Args:
-            client_id (str): Client ID, '*' means get all clients.
-
-        Returns:
-            (dict): Response from server. You can inquire the last_response for more information.
-        """
-        r = self.__get(f'/clients/?search_field=client_id&search_value={client_id}')
-        self.last_response = r
-        if r.status_code == 200:
-            payload = r.json()
-            if isinstance(payload, list):
-                payload = {'clients': payload}
-            return _success(r.status_code, 'Client retrieved', payload)
-        return _error(r.status_code, 'Client retrieval failed', self.__json_or_text(r))
-    
-    def create_client(self, client: dict) -> FalconStatus:
-        """
-        CreateClient - Create a client
-
-        Args:
-            client (dict): Client to create
-
-        Returns:
-            (dict): Response from server. You can inquire the last_response for more information.
-        """
-        r = self.__post('/clients', client)
-        self.last_response = r
-        if r.status_code == 201:
-            return _success(r.status_code, 'Client created', r.json())
-        return _error(r.status_code, 'Client creation failed', self.__json_or_text(r))
-    
-    def update_client(self, client: dict) -> FalconStatus:
-        """
-        UpdateClient - Update a client
-
-        Args:
-            client (dict): Client to update
-
-        Returns:
-            (dict): Response from server. You can inquire the last_response for more information.
-        """
-        r = self.__put('/clients', client)
-        self.last_response = r
-        if r.status_code == 200:
-            return _success(r.status_code, 'Client updated', r.json())
-        return _error(r.status_code, 'Client update failed', self.__json_or_text(r))
-    
-    def delete_client(self, client_id: str) -> FalconStatus:
-        """
-        DeleteClient - Delete a client
-
-        Args:
-            client_id (str): Client ID
-
-        Returns:
-            (dict): Response from server. You can inquire the last_response for more information.
-        """
-        r = self.__delete(f'/clients/{client_id}')
-        self.last_response = r
-        if r.status_code == 200:
-            return _success(r.status_code, 'Client deleted', r.json())
-        return _error(r.status_code, 'Client deletion failed', self.__json_or_text(r))
-
     def __json_or_text(self, result):
         """
         Return result.json() if possible, otherwise result.text()

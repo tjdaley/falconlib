@@ -27,7 +27,11 @@ undulations.
 
 ## Installation
 
-```pip install falconlib```
+```pip install git+https://github.com/tjdaley/falconlib.git```
+
+## Upgrading / Updating
+
+```pip install git+https://github.com/tjdaley/falconlib.git --upgrade```
 
 ## Instantiation
 
