@@ -305,26 +305,94 @@ class FalconLib:
     #--------------------------------------------------------------------------------
     # Discovery Management
     #--------------------------------------------------------------------------------
-    def create_discovery_request(self, discovery_request: dict) -> FalconStatus:
+    #                               F I L E S
+    #--------------------------------------------------------------------------------
+    def get_discovery_file(self, file_id: str) -> FalconStatus:
         """
-        CreateDiscoveryRequest - Create a discovery request
+        GetDiscoveryFile - Get a discovery file
 
         Args:
-            discovery_request (dict): Discovery request to create
+            file_id (str): ID of discovery file
 
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        # delete any id and version that may have been passed in
-        discovery_request.pop('id', None)
-        discovery_request.pop('version', None)
+        r = self.__get(f'/discovery_files/{file_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Discovery file retrieved', r.json())
+        return _error(r.status_code, 'Discovery file retrieval failed', self.__json_or_text(r))
+    
+    def get_discovery_files(self, client_id: str) -> FalconStatus:
+        """
+        GetDiscoveryFiles - Get all discovery files for a client.
 
-        r = self.__post('/discovery_requests', discovery_request)
+        Args:
+            client_id (str): ID of client
+
+        Returns:
+            (list): List of discovery files
+        """
+        r = self.__get(f'/discovery_files/client/{client_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Discovery files retrieved', {'discovery_files': r.json()})
+        return _error(r.status_code, 'Discovery files retrieval failed', self.__json_or_text(r))
+    
+    def create_discovery_file(self, discovery_file: dict) -> FalconStatus:
+        """
+        CreateDiscoveryFile - Create a discovery file
+
+        Args:
+            discovery_file (dict): Discovery file to create
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__post('/discovery_files/', discovery_file)
         self.last_response = r
         if r.status_code == 201:
-            return _success(r.status_code, 'Discovery request created', r.json())
-        return _error(r.status_code, 'Discovery request creation failed', self.__json_or_text(r))
+            return _success(r.status_code, 'Discovery file created', r.json())
+        return _error(r.status_code, 'Discovery file creation failed', self.__json_or_text(r))
     
+    def update_discovery_file(self, discovery_file: dict) -> FalconStatus:
+        """
+        UpdateDiscoveryFile - Update a discovery file
+
+        Args:
+            discovery_file (dict): Discovery file to update
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__put('/discovery_files/', discovery_file)
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Discovery file updated', r.json())
+        return _error(r.status_code, 'Discovery file update failed', self.__json_or_text(r))
+    
+    def delete_discovery_file(self, file_id: str) -> FalconStatus:
+        """
+        DeleteDiscoveryFile - Delete a discovery file
+
+        Args:
+            file_id (str): ID of discovery file
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        r = self.__delete(f'/discovery_files/{file_id}')
+        self.last_response = r
+        if r.status_code == 200:
+            return _success(r.status_code, 'Discovery file deleted', r.json())
+        return _error(r.status_code, 'Discovery file deletion failed', self.__json_or_text(r))
+
+    #--------------------------------------------------------------------------------
+    # Discovery Management
+    #--------------------------------------------------------------------------------
+    #                               R E Q U E S T S
+    #--------------------------------------------------------------------------------
+
     def get_discovery_request(self, discovery_request_id: str) -> FalconStatus:
         """
         GetDiscoveryRequest - Get a discovery request
@@ -341,21 +409,41 @@ class FalconLib:
             return _success(r.status_code, 'Discovery request retrieved', r.json())
         return _error(r.status_code, 'Discovery request retrieval failed', self.__json_or_text(r))
     
-    def get_discovery_requests(self, client_id: str) -> FalconStatus:
+    def get_discovery_requests(self, file_id: str) -> FalconStatus:
         """
-        GetDiscoveryRequests - Get all discovery requests for a client.
+        GetDiscoveryRequests - Get all discovery requests for a request file.
 
         Args:
-            username (str): Username of user
+            file_id (str): id of discovery_requests to retrieve
 
         Returns:
             (list): List of discovery requests
         """
-        r = self.__get('/discovery_requests?search_field=client_id&search_value=' + client_id)
+        r = self.__get(f'/discovery_requests/file/{file_id}')
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Discovery requests retrieved', {'discovery_requests': r.json()})
         return _error(r.status_code, 'Discovery requests retrieval failed', self.__json_or_text(r))
+    
+    def create_discovery_request(self, discovery_request: dict) -> FalconStatus:
+        """
+        CreateDiscoveryRequest - Create a discovery request
+
+        Args:
+            discovery_request (dict): Discovery request to create
+
+        Returns:
+            (dict): Response from server. You can inquire the last_response for more information.
+        """
+        # delete any id and version that may have been passed in
+        discovery_request.pop('id', None)
+        discovery_request.pop('version', None)
+
+        r = self.__post('/discovery_requests/', discovery_request)
+        self.last_response = r
+        if r.status_code == 201:
+            return _success(r.status_code, 'Discovery request created', r.json())
+        return _error(r.status_code, 'Discovery request creation failed', self.__json_or_text(r))
     
     def update_discovery_request(self, discovery_request: dict) -> FalconStatus:
         """
@@ -367,7 +455,7 @@ class FalconLib:
         Returns:
             (dict): Response from server. You can inquire the last_response for more information.
         """
-        r = self.__put('/discovery_requests', discovery_request)
+        r = self.__put('/discovery_requests/', discovery_request)
         self.last_response = r
         if r.status_code == 200:
             return _success(r.status_code, 'Discovery request updated', r.json())
